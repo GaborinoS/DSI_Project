@@ -1,10 +1,22 @@
 from confluent_kafka import Producer, KafkaError
 import json
 import utils.ccloud_lib as ccloud_lib
+import requests
+from string import Template
+import pandas as pd
 
-def create_message(value):
-     record_key = "alice"
-     record_value = json.dumps({'count': value})
+symbols = ['IBM']
+
+url = Template('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=$symbol&interval=5min&apikey=5LZM13OZQMZFPU92')
+
+for symbol in symbols:
+    r = requests.get(url.substitute(symbol=symbol))
+    data = r.json()
+
+def create_message(symbol):
+     record_key = symbol
+     r = requests.get(url.substitute(symbol=symbol))
+     record_value = r.json()
      return { "record_key": record_key, "record_value": record_value}
 
 # Optional per-message on_delivery handler (triggered by poll() or flush())
@@ -27,8 +39,8 @@ if __name__ == '__main__':
     ccloud_lib.create_topic(producer_conf, args.topic)
     producer = Producer(producer_conf)
 
-    for i in range(10):
-        msg = create_message(i)
+    for symbol in symbols:
+        msg = create_message(symbol)
         producer.produce(args.topic, key=msg["record_key"], value=msg["record_value"], on_delivery=acked)
         # p.poll() serves delivery reports (on_delivery)
         # from previous produce() calls.
