@@ -9,14 +9,10 @@ symbols = ['IBM']
 
 url = Template('https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=$symbol&interval=5min&apikey=5LZM13OZQMZFPU92')
 
-for symbol in symbols:
-    r = requests.get(url.substitute(symbol=symbol))
-    data = r.json()
-
 def create_message(symbol):
      record_key = symbol
      r = requests.get(url.substitute(symbol=symbol))
-     record_value = r.json()
+     record_value = str(r.json())
      return { "record_key": record_key, "record_value": record_value}
 
 # Optional per-message on_delivery handler (triggered by poll() or flush())
