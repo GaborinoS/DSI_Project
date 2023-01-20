@@ -1,16 +1,6 @@
 from confluent_kafka import Consumer, Producer
 import json
 import utils.ccloud_lib as ccloud_lib
-import pandas as pd
-
-import influxdb_client
-from influxdb import DataFrameClient
-from influxdb_client import InfluxDBClient, Point
-from influxdb_client.client.write_api import SYNCHRONOUS
-
-from dateutil import parser
-import requests
-from string import Template
 
 def run_consumer(consumer_conf, consumer_name, topic, process):
     # set custom group name
@@ -43,8 +33,9 @@ def run_consumer(consumer_conf, consumer_name, topic, process):
                 record_value = msg.value()
                 # in case that ingested that isn't json
                 try:
+                    key = record_key
                     data = record_value.decode(encoding='utf-8', errors='strict')
-                    process(data)
+                    process(key, data)
                 except:
                     pass
     except KeyboardInterrupt:
