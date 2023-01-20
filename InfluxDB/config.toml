@@ -1,0 +1,5 @@
+# TOML-based config
+[influx2]
+url = "http://localhost:8086"
+org = "dsi"
+token = "whVmtiLViagPA8zCpz4-ItfX56GPhoGMUg4s9u-kx7fXmZTNcVE9xWNbLoTXB0c347vMG8vUxxIAKDPJdsFO6A=="

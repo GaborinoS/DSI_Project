@@ -35,7 +35,7 @@ def run_consumer(consumer_conf, consumer_name, topic, process):
                 try:
                     key = record_key
                     data = record_value.decode(encoding='utf-8', errors='strict')
-                    process(key, data)
+                    process(data)
                 except:
                     pass
     except KeyboardInterrupt:
