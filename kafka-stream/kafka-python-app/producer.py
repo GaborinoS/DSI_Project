@@ -4,6 +4,7 @@ import utils.ccloud_lib as ccloud_lib
 import requests
 from string import Template
 import pandas as pd
+import time
 
 symbols = ['IBM']
 
@@ -35,10 +36,12 @@ if __name__ == '__main__':
     ccloud_lib.create_topic(producer_conf, args.topic)
     producer = Producer(producer_conf)
 
-    for symbol in symbols:
-        msg = create_message(symbol)
-        producer.produce(args.topic, key=msg["record_key"], value=msg["record_value"], on_delivery=acked)
-        # p.poll() serves delivery reports (on_delivery)
-        # from previous produce() calls.
-        producer.poll(0)
+    msg = create_message('IBM')
+    #data = json.loads(msg["record_value"])
+    producer.produce(args.topic, key=msg["record_key"], value=msg["record_value"], on_delivery=acked)
+    # #     # p.poll() serves delivery reports (on_delivery)
+    # #     # from previous produce() calls.
+    producer.poll(0)
+    # #print(msg) 
+
     producer.flush()

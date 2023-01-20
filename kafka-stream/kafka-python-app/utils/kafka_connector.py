@@ -33,7 +33,7 @@ def run_consumer(consumer_conf, consumer_name, topic, process):
                 record_value = msg.value()
                 # in case that ingested that isn't json
                 try:
-                    data = json.loads(record_value)
+                    data = record_value.decode(encoding='utf-8', errors='strict')
                     process(data)
                 except:
                     pass
