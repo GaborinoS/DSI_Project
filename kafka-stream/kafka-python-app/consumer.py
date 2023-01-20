@@ -4,7 +4,7 @@ from confluent_kafka import Producer, KafkaError
 import utils.ccloud_lib as ccloud_lib
 
 def process_data(data):
-    print(data)
+    df = pd.read_json(data).T
 
 if __name__ == '__main__':
     # Read arguments and configurations and initialize

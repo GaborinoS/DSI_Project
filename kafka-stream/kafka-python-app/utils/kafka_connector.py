@@ -1,6 +1,16 @@
 from confluent_kafka import Consumer, Producer
 import json
 import utils.ccloud_lib as ccloud_lib
+import pandas as pd
+
+import influxdb_client
+from influxdb import DataFrameClient
+from influxdb_client import InfluxDBClient, Point
+from influxdb_client.client.write_api import SYNCHRONOUS
+
+from dateutil import parser
+import requests
+from string import Template
 
 def run_consumer(consumer_conf, consumer_name, topic, process):
     # set custom group name
