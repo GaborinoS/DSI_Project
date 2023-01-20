@@ -4,24 +4,25 @@ from confluent_kafka import Producer, KafkaError
 import utils.ccloud_lib as ccloud_lib
 import pandas as pd
 
-import influxdb_client
+
 from influxdb import DataFrameClient
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
 
 from dateutil import parser
-import requests
+
 from string import Template
 import yfinance as yf
-import datetime
 
 
 
-def process_data(data):
+
+def process_data(data, symbol):
     df = pd.read_json(data).T
     df = df.astype(float)
     df.index.name = 'Datetime'
 
+    print(symbol)
     print(df.head())
 
     #InfluxDB connection
@@ -35,7 +36,7 @@ def process_data(data):
         writer.write(
             bucket=bucket,
             record=df,
-            data_frame_measurement_name="9",
+            data_frame_measurement_name=symbol,
             data_frame_tag_columns=["symbol"],
             data_frame_field_columns=["Open", "High", "Low", "Close", "Adj Close", "Volume"]
             )

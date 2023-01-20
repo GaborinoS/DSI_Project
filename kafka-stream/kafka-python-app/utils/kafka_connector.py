@@ -1,5 +1,4 @@
 from confluent_kafka import Consumer, Producer
-import json
 import utils.ccloud_lib as ccloud_lib
 
 def run_consumer(consumer_conf, consumer_name, topic, process):
@@ -33,9 +32,9 @@ def run_consumer(consumer_conf, consumer_name, topic, process):
                 record_value = msg.value()
                 # in case that ingested that isn't json
                 try:
-                    key = record_key
+                    key = record_key.decode(encoding='utf-8')
                     data = record_value.decode(encoding='utf-8', errors='strict')
-                    process(data)
+                    process(data, key)
                 except:
                     pass
     except KeyboardInterrupt:
