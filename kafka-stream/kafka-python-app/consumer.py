@@ -13,30 +13,29 @@ from dateutil import parser
 import requests
 from string import Template
 import yfinance as yf
+import datetime
 
 
 
 def process_data(data):
-    # df = pd.read_json(data).T
-    # df = df.astype(float)
+    df = pd.read_json(data).T
+    df = df.astype(float)
+    df.index.name = 'Datetime'
 
-    # print(df.head())
+    print(df.head())
+
     #InfluxDB connection
     bucket = "DSI_test"
-    #token ="yxk8_Or5qHZJxrhJE3SkAnTQSViQCsmrUoR0xPZd_0scy1T8FTuL1cKSTDKh1ft8Bqs3Zbt7Rwkys-FzajIVFQ=="
     token ="GMbnHWGhM9p9t9mIjbc1I5KlWir8LJxBDkpMF0SiOa56f1nvLepCEN7iI_5-sR80FA8CvLmf_mHcy8Gc5XYwvA=="
     org="dsi"
     client = InfluxDBClient(url="http://localhost:8086", token=token, org=org)
-    #client = InfluxDBClient(url="http://172.19.0.2:8086", token=token, org=org)
 
-    data = yf.download(tickers='IBM', period='1d', interval='1m')
-    print(data.head())
 
     with client.write_api(write_options=SYNCHRONOUS) as writer:
         writer.write(
             bucket=bucket,
-            record=data,
-            data_frame_measurement_name="6",
+            record=df,
+            data_frame_measurement_name="9",
             data_frame_tag_columns=["symbol"],
             data_frame_field_columns=["Open", "High", "Low", "Close", "Adj Close", "Volume"]
             )
