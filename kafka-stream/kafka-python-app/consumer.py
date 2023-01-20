@@ -31,12 +31,12 @@ def process_data(key, data):
 
 if __name__ == '__main__':
     #InfluxDB connection
-    # bucket = "DSI_test"
-    # token ="yxk8_Or5qHZJxrhJE3SkAnTQSViQCsmrUoR0xPZd_0scy1T8FTuL1cKSTDKh1ft8Bqs3Zbt7Rwkys-FzajIVFQ=="
-    # token ="whVmtiLViagPA8zCpz4-ItfX56GPhoGMUg4s9u-kx7fXmZTNcVE9xWNbLoTXB0c347vMG8vUxxIAKDPJdsFO6A=="
-    # org="DSI"
-    # client = InfluxDBClient(url="http://localhost:8086", token=token, org=org)
-
+    bucket = "DSI_test"
+    #token ="yxk8_Or5qHZJxrhJE3SkAnTQSViQCsmrUoR0xPZd_0scy1T8FTuL1cKSTDKh1ft8Bqs3Zbt7Rwkys-FzajIVFQ=="
+    token ="whVmtiLViagPA8zCpz4-ItfX56GPhoGMUg4s9u-kx7fXmZTNcVE9xWNbLoTXB0c347vMG8vUxxIAKDPJdsFO6A=="
+    org="dsi"
+    #client = InfluxDBClient(url="http://localhost:8086", token=token, org=org)
+    client = InfluxDBClient(url="http://172.17.0.3:8086", token=token, org=org)
 
 
 
