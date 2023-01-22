@@ -9,3 +9,4 @@ influxdb-client[async]
 influxdb
 yfinance
 pandas
+psycopg2-binary
