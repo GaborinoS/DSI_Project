@@ -79,6 +79,16 @@ def load_data(df):
     cur.close()
     conn.close()
 
+    #Get symbols for Influx-Con
+    symbols = SP_500["symbol"].unique()
+    df = pd.DataFrame(columns=["Date","Symbol", "OHLC", "Value"])
+
+    # Only with influx connection
+    for symbol in symbols:
+        df = df.append(data_from_influx(symbol, "5d"))
+        
+
+
     data = [df, SP_500]   
 
     return data
