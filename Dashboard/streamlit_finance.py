@@ -79,16 +79,14 @@ def load_data(df):
     cur.close()
     conn.close()
 
-    #Get symbols for Influx-Con
-    symbols = SP_500["symbol"].unique()
-    df = pd.DataFrame(columns=["Date","Symbol", "OHLC", "Value"])
+    # #Get symbols for Influx-Con
+    # symbols = SP_500["symbol"].unique()
+    # df = pd.DataFrame(columns=["Date","Symbol", "OHLC", "Value"])
 
-    # Only with influx connection
-    for symbol in symbols:
-        df = df.append(data_from_influx(symbol, "5d"))
+    # # Only with influx connection
+    # for symbol in symbols:
+    #     df = df.append(data_from_influx(symbol, "5d"))
         
-
-
     data = [df, SP_500]   
 
     return data
@@ -114,7 +112,8 @@ with rightcol:
     stock = st.selectbox("Stock", symbols)
 
     #Candlestick Plot
-    df_input = df_price[df_price["symbol"] == stock]
+    df_input = data_from_influx(stock, "5d")
+    #df_input = df_price[df_price["symbol"] == stock]
     fig = go.Figure(data=[go.Candlestick(x=df_input.index,
                 open=df_input["value"]["Open"],
                 high=df_input["value"]["High"],
