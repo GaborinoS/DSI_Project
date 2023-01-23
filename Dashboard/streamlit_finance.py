@@ -6,6 +6,9 @@ import numpy as np
 import json
 from psycopg2.extras import Json
 import psycopg2
+from influxdb import DataFrameClient
+from influxdb_client import InfluxDBClient, Point
+from influxdb_client.client.write_api import SYNCHRONOUS
 
 
 
@@ -15,6 +18,41 @@ symbol = df_input["symbol"].unique()
 df_input = df_input.pivot(index="time", columns=["field"], values = ["value"])
 df_input["symbol"] = [symbol[0] for x in df_input.index]
 print(df_input.head())
+
+
+
+
+def data_from_influx(symbol, display_range):
+
+    bucket = "DSI_test"
+    token ="GMbnHWGhM9p9t9mIjbc1I5KlWir8LJxBDkpMF0SiOa56f1nvLepCEN7iI_5-sR80FA8CvLmf_mHcy8Gc5XYwvA=="
+    org="dsi"
+    client = InfluxDBClient(url="http://localhost:8086", token=token, org=org)
+
+    query_api = client.query_api()
+
+
+    query = """from(bucket: "DSI_test")
+            |> range(start: -"""+display_range+""")
+            |> filter(fn: (r) => r["_measurement"] ==\"""" +symbol+"""\")
+            |> filter(fn: (r) => r["_field"] == "Open" or r["_field"] == "Close" or r["_field"] == "High" or r["_field"] == "Low")"""
+
+    result = query_api.query(org=org, query=query)
+
+    results = []
+    for table in result:
+        for record in table.records:
+            results.append((record.get_time(), record.get_measurement(), record.get_field(), record.get_value()))
+
+    #make a dataframe from the results
+
+    df = pd.DataFrame(results, columns=['Date',"Symbol", 'OHLC', "Value"])
+    df['Date'] = pd.to_datetime(df['Date'])
+    #if OHLC is Open, High, Low, or Close, then make it a column
+    df = df.pivot(index='Date', columns='OHLC', values='Value')
+    
+    return df
+
 
 
 @st.cache
