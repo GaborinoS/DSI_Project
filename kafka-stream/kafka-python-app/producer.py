@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
         for symbol in symbols:
             #Interval required 1 minute
-            data = yf.download(tickers=symbol, period='1d', interval='1m').to_json(orient = "index")
+            data = yf.download(tickers=symbol, period='5d', interval='1m').to_json(orient = "index")
 
             msg = create_message(symbol, data)
             #data = json.loads(msg["record_value"])
@@ -86,5 +86,5 @@ if __name__ == '__main__':
             producer.poll(0)
             producer.flush()
 
-        #suspend for 2 days
-        time.sleep(172800)
+        #suspend for 30 minutes
+        time.sleep(1800)

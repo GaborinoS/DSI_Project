@@ -12,15 +12,6 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 
 
 
-#load csv, replace by DB-query
-df_input = pd.read_csv("ABBV.csv")
-symbol = df_input["symbol"].unique()
-df_input = df_input.pivot(index="time", columns=["field"], values = ["value"])
-df_input["symbol"] = [symbol[0] for x in df_input.index]
-print(df_input.head())
-
-
-
 
 def data_from_influx(symbol, display_range):
 
@@ -56,7 +47,7 @@ def data_from_influx(symbol, display_range):
 
 
 @st.cache
-def load_data(df):
+def load_data():
     #-----Password hidden
     f=open("PW.txt", "r") 
     userPw=[f.readline()]
@@ -79,17 +70,9 @@ def load_data(df):
     cur.close()
     conn.close()
 
-    # #Get symbols for Influx-Con
-    # symbols = SP_500["symbol"].unique()
-    # df = pd.DataFrame(columns=["Date","Symbol", "OHLC", "Value"])
 
-    # # Only with influx connection
-    # for symbol in symbols:
-    #     df = df.append(data_from_influx(symbol, "5d"))
-        
-    data = [df, SP_500]   
 
-    return data
+    return SP_500
 
 def render_info():
     st.title("Finance Data")
@@ -98,33 +81,30 @@ def render_info():
 
 render_info()
 
-data = load_data(df_input)
+data = load_data()
 
 
-df_price = data[0]
-df_info = data[1] 
+symbols = data["symbol"].unique()
 
-symbols = df_info["symbol"].unique()
-
-leftcol, rightcol = st.columns([2, 1])
+leftcol, rightcol = st.columns([1, 1])
 
 with rightcol:  
     stock = st.selectbox("Stock", symbols)
 
     #Candlestick Plot
-    df_input = data_from_influx(stock, "5d")
+    df_input = data_from_influx(stock, "10d")
     #df_input = df_price[df_price["symbol"] == stock]
     fig = go.Figure(data=[go.Candlestick(x=df_input.index,
-                open=df_input["value"]["Open"],
-                high=df_input["value"]["High"],
-                low=df_input["value"]["Low"],
-                close=df_input["value"]["Close"])])
-    st.plotly_chart(fig, use_container_width=False, sharing="streamlit", theme="streamlit")
+                open=df_input["Open"],
+                high=df_input["High"],
+                low=df_input["Low"],
+                close=df_input["Close"])])
+    st.plotly_chart(fig, use_container_width=True, sharing="streamlit", theme="streamlit")
 
         
 with leftcol:
     #Infotable
-    df_info_table = pd.DataFrame([df_info [df_info ["symbol"] == stock]["info"].values[0]]).T
+    df_info_table = pd.DataFrame([data [data ["symbol"] == stock]["info"].values[0]]).T
     df_info_table.columns = [stock]
     st.table(df_info_table)
 
