@@ -58,7 +58,7 @@ def load_data():
                             port="5432",
                             database="finance_data",
                             user="ds22m017",
-                            password=str(userPw[0]),#SchachingeR14
+                            password=str(userPw[0]),
                             connect_timeout=3)
     cur = conn.cursor()
 
